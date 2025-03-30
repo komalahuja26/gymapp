@@ -64,11 +64,33 @@ const createScene = async function() {
         yogaMat.material = matMat;
     
        
-        // STEP: Importing animated Jumping Jacks model........................
+        // STEP: Importing animated Jumping Jack  model........................
         BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "JumpingJacks.glb", scene).then((result) => {
             const trainer = result.meshes[0];
-            trainer.position = new BABYLON.Vector3(0, -3, 0);
-            trainer.scaling = new BABYLON.Vector3(1.2, 1.2, 1.2);
+            trainer.position = new BABYLON.Vector3(-2, 0.01, 0);
+            trainer.scaling = new BABYLON.Vector3(30, 30, 30);
+    
+            // Playing the animation.................
+            if (result.skeletons.length > 0) {
+                scene.beginAnimation(result.skeletons[0], 0, 100, true); // Loop animation
+            }
+        });
+        // importing animated Pushup model..............
+        BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "PushUps.glb", scene).then((result) => {
+            const trainer = result.meshes[0];
+            trainer.position = new BABYLON.Vector3(2, 0.01, 0);
+            trainer.scaling = new BABYLON.Vector3(30, 30, 30);
+    
+            // Playing the animation.................
+            if (result.skeletons.length > 0) {
+                scene.beginAnimation(result.skeletons[0], 0, 100, true); // Loop animation
+            }
+        });
+          // importing animated squat model..............
+          BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "squats.glb", scene).then((result) => {
+            const trainer = result.meshes[0];
+            trainer.position = new BABYLON.Vector3(4, 0.01, 0);
+            trainer.scaling = new BABYLON.Vector3(30, 30, 30);
     
             // Playing the animation.................
             if (result.skeletons.length > 0) {
