@@ -97,6 +97,16 @@ const createScene = async function() {
                 scene.beginAnimation(result.skeletons[0], 0, 100, true); // Loop animation
             }
         });
+            // Checking to see basically if WebXR (immersive-vr, specifically) is supported on this device.....................
+    if (await BABYLON.WebXRSessionManager.IsSessionSupportedAsync("immersive-vr")) {
+        const xr = await scene.createDefaultXRExperienceAsync({
+            floorMeshes: [gymFloor],
+            optionalFeatures: true
+        });
+    } else {
+        console.log("WebXR is not supported on this device.");
+    };
+
     
         return scene;
     
