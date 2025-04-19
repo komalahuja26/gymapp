@@ -97,6 +97,28 @@ const createScene = async function() {
                 scene.beginAnimation(result.skeletons[0], 0, 100, true); // Loop animation
             }
         });
+// Treadmill model.....
+BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "tredmill.glb", scene).then((result) => {
+    const treadmill = result.meshes[0];
+    treadmill.position = new BABYLON.Vector3(8, 0.5, 4);
+    treadmill.scaling = new BABYLON.Vector3(3, 3, 3);
+});
+//dumbbell........
+BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "dumbbell.glb", scene).then((result) => {
+    const dumbbells = result.meshes[0];
+    dumbbells.position = new BABYLON.Vector3(-6, 1, -4);
+    dumbbells.scaling = new BABYLON.Vector3(4, 4, 4);
+    dumbbells.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0); 
+});
+
+// Roman chair.......
+BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "romanchair.glb", scene).then((result) => {
+    const bench = result.meshes[0];
+    bench.position = new BABYLON.Vector3(6, -0.1, -7);
+    bench.scaling = new BABYLON.Vector3(0.75, 0.75, 0.75);
+});
+
+
             // Checking to see basically if WebXR (immersive-vr, specifically) is supported on this device.....................
     if (await BABYLON.WebXRSessionManager.IsSessionSupportedAsync("immersive-vr")) {
         const xr = await scene.createDefaultXRExperienceAsync({
