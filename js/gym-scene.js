@@ -1,5 +1,19 @@
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
+//variables to store animations.......
+let pushupTrainer, jumpingJackTrainer, squatTrainer;
+
+//Function to show only the selected trainer.........
+function loadTrainer(name) {
+    if (pushupTrainer) pushupTrainer.setEnabled(false);
+    if (jumpingJackTrainer) jumpingJackTrainer.setEnabled(false);
+    if (squatTrainer) squatTrainer.setEnabled(false);
+
+    if (name === "PushUps" && pushupTrainer) pushupTrainer.setEnabled(true);
+    if (name === "JumpingJacks" && jumpingJackTrainer) jumpingJackTrainer.setEnabled(true);
+    if (name === "Squats" && squatTrainer) squatTrainer.setEnabled(true);
+}
+
 
 const createScene = async function() {
     const scene = new BABYLON.Scene(engine);
@@ -25,36 +39,81 @@ const createScene = async function() {
     gymFloor.receiveShadows = true;
 
     // walls of my gym room.............
+
+    
     const wallMat = new BABYLON.StandardMaterial("wallMat");
     wallMat.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+ 
+ //Front wall split into 3 parts to make a door...........
+const frontWallLeft = BABYLON.MeshBuilder.CreateBox("frontWallLeft", {
+    width: 8.5,
+    height: 6,
+    depth: 0.2
+});
+frontWallLeft.position = new BABYLON.Vector3(-5.75, 3, -10);
+frontWallLeft.material = wallMat;
 
-    const frontWall = BABYLON.MeshBuilder.CreateBox("frontWall", {
-        width: 20,
-        height: 3,
-        depth: 0.2
-    });
-    frontWall.position = new BABYLON.Vector3(0, 1.5, -10);
-    frontWall.material = wallMat;
+const frontWallRight = BABYLON.MeshBuilder.CreateBox("frontWallRight", {
+    width: 8.5,
+    height: 6,
+    depth: 0.2
+});
+frontWallRight.position = new BABYLON.Vector3(5.75, 3, -10);
+frontWallRight.material = wallMat;
 
-    const backWall = frontWall.clone("backWall");
-    backWall.position.z = 10;
+const frontWallTop = BABYLON.MeshBuilder.CreateBox("frontWallTop", {
+    width: 3,
+    height: 2,
+    depth: 0.2
+});
+frontWallTop.position = new BABYLON.Vector3(0, 5, -10); 
+frontWallTop.material = wallMat;
 
+
+//back wall......
+const backWall = BABYLON.MeshBuilder.CreateBox("backWall", {
+    width: 20,
+    height: 6,
+    depth: 0.2
+});
+backWall.position = new BABYLON.Vector3(0, 3, 10);
+backWall.material = wallMat;
+
+//Left and right side walls........    
     const leftWall = BABYLON.MeshBuilder.CreateBox("leftWall", {
         width: 20,
-        height: 3,
+        height: 6,
         depth: 0.2
     });
     leftWall.rotation.y = Math.PI / 2;
-    leftWall.position = new BABYLON.Vector3(-10, 1.5, 0);
+    leftWall.position = new BABYLON.Vector3(-10, 3, 0);
     leftWall.material = wallMat;
 
     const rightWall = leftWall.clone("rightWall");
     rightWall.position.x = 10;
 
+    //Transparent glass panels as a stylish roof...........
+    const glassMat = new BABYLON.StandardMaterial("glassMat", scene);
+    glassMat.diffuseColor = new BABYLON.Color3(0.6, 0.8, 1); // light blue...
+    glassMat.alpha = 0.3; // transparency
+    
+    // Left glass panel.....
+    const glassPanel1 = BABYLON.MeshBuilder.CreatePlane("glass1", {
+        width: 10,
+        height: 20
+    }, scene);
+    glassPanel1.material = glassMat;
+    glassPanel1.rotation.x = Math.PI / 2; // make it flat
+    glassPanel1.position = new BABYLON.Vector3(-5, 6.1, 0); // just above the wall
+    
+    // Right glass panel........
+    const glassPanel2 = glassPanel1.clone("glass2");
+    glassPanel2.position.x = 5; // move to right
+    
         // creating the YOGA MAT...................
         const yogaMat = BABYLON.MeshBuilder.CreatePlane("yogaMat", {
-            width: 2,
-            height: 0.6
+            width: 12,
+            height: 6
         });
         yogaMat.rotation.x = Math.PI / 2;
         yogaMat.position = new BABYLON.Vector3(0, 0.01, 0);
@@ -64,39 +123,40 @@ const createScene = async function() {
         yogaMat.material = matMat;
     
        
-        // STEP: Importing animated Jumping Jack  model........................
+        // STEP: loading animated Jumping Jack  model........................
         BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "JumpingJacks.glb", scene).then((result) => {
-            const trainer = result.meshes[0];
-            trainer.position = new BABYLON.Vector3(-2, 0.01, 0);
-            trainer.scaling = new BABYLON.Vector3(30, 30, 30);
-    
-            // Playing the animation.................
+            jumpingJackTrainer = result.meshes[0];
+            jumpingJackTrainer.setEnabled(false);
+            jumpingJackTrainer.position = new BABYLON.Vector3(-2, 0.01, 0);
+            jumpingJackTrainer.scaling = new BABYLON.Vector3(30, 30, 30);
             if (result.skeletons.length > 0) {
-                scene.beginAnimation(result.skeletons[0], 0, 100, true); // Loop animation
+                scene.beginAnimation(result.skeletons[0], 0, 100, true);
             }
         });
-        // importing animated Pushup model..............
+        
+        // loading animated Pushup model..............
         BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "PushUps.glb", scene).then((result) => {
-            const trainer = result.meshes[0];
-            trainer.position = new BABYLON.Vector3(2, 0.01, 0);
-            trainer.scaling = new BABYLON.Vector3(30, 30, 30);
-    
-            // Playing the animation.................
+            pushupTrainer = result.meshes[0];
+            pushupTrainer.setEnabled(false);
+            pushupTrainer.position = new BABYLON.Vector3(2, 0.01, 0);
+            pushupTrainer.scaling = new BABYLON.Vector3(30, 30, 30);
             if (result.skeletons.length > 0) {
-                scene.beginAnimation(result.skeletons[0], 0, 100, true); // Loop animation
+                scene.beginAnimation(result.skeletons[0], 0, 100, true);
             }
         });
-          // importing animated squat model..............
+        
+        
+          // loading animated squat model..............
           BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "squats.glb", scene).then((result) => {
-            const trainer = result.meshes[0];
-            trainer.position = new BABYLON.Vector3(4, 0.01, 0);
-            trainer.scaling = new BABYLON.Vector3(30, 30, 30);
-    
-            // Playing the animation.................
+            squatTrainer = result.meshes[0];
+            squatTrainer.setEnabled(false);
+            squatTrainer.position = new BABYLON.Vector3(4, 0.01, 0);
+            squatTrainer.scaling = new BABYLON.Vector3(30, 30, 30);
             if (result.skeletons.length > 0) {
-                scene.beginAnimation(result.skeletons[0], 0, 100, true); // Loop animation
+                scene.beginAnimation(result.skeletons[0], 0, 100, true);
             }
         });
+        
 // Treadmill model.....
 BABYLON.SceneLoader.ImportMeshAsync("", "./meshes/", "tredmill.glb", scene).then((result) => {
     const treadmill = result.meshes[0];
